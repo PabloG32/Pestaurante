@@ -215,9 +215,19 @@ class RestauranteView {
 
     }
 
+    obtenerDishesAleatorios(iterable) {
+        const dishes = [...iterable];
+        // Generar tres números aleatorios entre 0 y la longitud del array de dishes
+        const aleatorios = Array.from({ length: 3 }, () => Math.floor(Math.random() * dishes.length));
+        // Devolver los dishes correspondientes a las posiciones aleatorias generadas
+        return aleatorios.map(posicion => dishes[posicion]);
+
+    }
+
     showDishes(dishes) {
+        const platosAleatorios = this.obtenerDishesAleatorios(dishes);
         this.dishes.replaceChildren();
-        for (const dish of dishes) {
+        for (const dish of platosAleatorios) {
             this.dishes.insertAdjacentHTML('beforeend', `
             <div class="col">
             <div class="card shadow-sm">
