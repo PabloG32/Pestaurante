@@ -10,6 +10,9 @@ class RestauranteView {
         this.dishes = document.getElementById('platos-centro');
         this.restaurantsCentral = document.getElementById('restaurantsCentral');
         this.dishesCategory = document.getElementById('platosCategorias');
+        this.infoWindow = null;
+        this.btnInfo = document.getElementById('btnInfo');
+
 
     }
 
@@ -207,6 +210,7 @@ class RestauranteView {
                     </div>
                     <h3 class="fs-2 text-body-emphasis">Nombre: ${dish.name}</h3>
                     <p>Descripción: ${dish.description}.</p>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" id="btnInfo" data-name="${dish.name}">Info</button>
                 </div>
             </div>
         </div>
@@ -309,6 +313,73 @@ class RestauranteView {
                 handler(event.target.dataset.cat);
             });
         }
+    }
+
+
+
+    //Ventana Info
+    showDishInfoWindows(dish, message = "") {
+        let main = this.infoWindow.document.querySelector('main');
+        const header = this.infoWindow.document.querySelector('header nav');
+        main.replaceChildren();
+        header.replaceChildren();
+        if (dish) {
+            console.log(dish);
+            this.infoWindow.document.title = `${dish.name}`;
+            header.insertAdjacentHTML('beforeend', `<h1 dataname="${dish.name}" class="display-5">${dish.name}</h1>`);
+            main.insertAdjacentHTML('beforeend', `
+            <div class="row d-flex
+            justify-content-center">
+        <div class="col-md-10">
+            <div class="card">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="images p-3">
+                            <div class="text-center p-4"> <img id="main-image" src="${dish.image}" /> </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="dish p-4">
+                            <div class="mt-4 mb-3"> <span
+                                    class="text-uppercase text-muted description">${dish.description}</span>
+                                <div class="price d-flex flex-row align-itemscenter">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br><br>
+            `);
+            main.insertAdjacentHTML('beforeend', '<button class="btn btnprimary text-uppercase m-2 px-4"onClick = "window.close()" > Cerrar</button > ');
+        }
+        else {
+            main = document.createElement('div');
+            main.classList.add('container');
+            main.classList.add('mt-5');
+            main.classList.add('mb-5');
+            main.insertAdjacentHTML('beforeend', `<div div class="row d-flex
+            justify - content - center">${message}</div>`);
+        }
+        this.infoWindow.document.body.scrollIntoView();
+
+    }
+
+    bindShowDishInfoWindows(handler) {
+        const bOpen = document.getElementById("btnInfo");
+        bOpen.addEventListener('click', (event) => {
+            if (!this.infoWindow || this.infoWindow.closed) {
+                this.infoWindow = window.open("info.html", "InfoWindow", "with=800, height=600, top=250, left=250, titlebar=yes, toolbar=no, menubar=no, location=no",);
+                this.infoWindow.addEventListener("DOMContentLoaded", () => {
+                    handler(event.target.dataset.name);
+                });
+            } else {
+                handler(event.target.dataset.name);
+                this.infoWindow.focus();
+            }
+        });
     }
 }
 export default RestauranteView;

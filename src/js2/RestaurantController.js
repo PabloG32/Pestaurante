@@ -208,12 +208,22 @@ class RestaurantController {
     handlerShowDish = (name) => {
         const dish = this[MODEL].createDish(name);
         this[VIEW].showDishesMain(dish);
+        this[VIEW].bindShowDishInfoWindows(this.handlerShowDishInfoWindows);
     }
 
     handlerShowCategoryDishes = (name) => {
         const category = this[MODEL].createCategory(name);
         const dishes = this[MODEL].getDishesInCategory(category);
         this[VIEW].showDishesInCategory(dishes);
+    }
+
+    handlerShowDishInfoWindows = (name) => {
+        try {
+            const dish = this[MODEL].createDish(name);
+            this[VIEW].showDishInfoWindows(dish);
+        } catch {
+            this[VIEW].showDishInfoWindows(null, "No existe")
+        }
     }
 }
 export default RestaurantController;
