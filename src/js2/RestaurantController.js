@@ -12,6 +12,8 @@ class RestaurantController {
         this.onInit();
         this[VIEW].bindInit(this.handleInit);
 
+        this[VIEW].bindCloseWindow();
+
     }
     onInit = () => {
         this.onCategories();
@@ -186,6 +188,8 @@ class RestaurantController {
 
     handlerShowCategory = (name) => {
         const category = this[MODEL].createCategory(name);
+        const dishes = this[MODEL].getDishesInCategory(category);
+        this[VIEW].showDishesInCategory(dishes);
     }
 
     handlerShowAllergen = (name) => {

@@ -1,3 +1,4 @@
+const EXCECUTE_HANDLER = Symbol('excecuteHandler');
 class RestauranteView {
     constructor() {
         this.main = document.getElementsByTagName('main')[0];
@@ -11,18 +12,25 @@ class RestauranteView {
         this.restaurantsCentral = document.getElementById('restaurantsCentral');
         this.dishesCategory = document.getElementById('platosCategorias');
         this.infoWindow = null;
-        this.btnInfo = document.getElementById('btnInfo');
-
-
+        this.closeButton = document.getElementById('closeWindow');
     }
 
-    init() {
+    // [EXCECUTE_HANDLER](handler, handlerArguments, scrollElement, data, url, event) {
+    //     handler(...handlerArguments);
+    //     const scroll = document.querySelector(scrollElement);
+    //     if (scroll) scroll.scrollIntoView();
+    //     history.pushState(data, null, url);
+    //     event.preventDefault();
+    // }
 
-    }
+    // init() {
+
+    // }
 
     bindInit(handler) {
         document.getElementById('init').addEventListener('click', (event) => {
             handler();
+            //this[EXCECUTE_HANDLER](handler, [], 'body', { action: 'init' }, '#', event);
         });
     }
 
@@ -30,7 +38,7 @@ class RestauranteView {
     showCategoriesMenu(categories) {
         this.categoriesMenu.replaceChildren();
         for (const category of categories) {
-            this.categoriesMenu.insertAdjacentHTML('beforeend', `<li><a data-category="${category.name}" class="dropdown-item" href="#">${category.name}</a></li>`)
+            this.categoriesMenu.insertAdjacentHTML('beforeend', `<li><a id="cat-menu" data-category="${category.name}" class="dropdown-item" href="#">${category.name}</a></li>`)
         }
     }
 
@@ -38,6 +46,15 @@ class RestauranteView {
         for (const li of this.categoriesMenu.children) {
             li.firstElementChild.addEventListener('click', (event) => {
                 handler(event.currentTarget.dataset.category);
+                // const { category } = event.currentTarget.dataset;
+                // this[EXCECUTE_HANDLER](
+                //     handler,
+                //     [category],
+                //     '#cat-menu',
+                //     { action: 'showCategoriesMenu', category },
+                //     `#${category}`,
+                //     event,
+                // );
             });
         }
     }
@@ -59,12 +76,20 @@ class RestauranteView {
                 <p class="card-text">${category.name}</p>
                 <div class="d-flex justify-content-between align-items-center">
                     <div class="btn-group">
-                        <button type="button" data-cat="${category.name}" class="btn btn-sm btn-outline-secondary">Ver</button>
+                        <button type="button" data-cat="${category.name}" class="btn btn-sm btn-outline-secondary" href="#cat-centro">Ver</button>
                     </div>
                 </div>
             </div>
             </div>
         </div>`)
+        }
+    }
+
+    bindCategoriesMain(handler) {
+        for (const buttom of this.categories.children) {
+            buttom.addEventListener('click', (event) => {
+                handler(event.target.dataset.cat);
+            });
         }
     }
 
@@ -210,7 +235,7 @@ class RestauranteView {
                     </div>
                     <h3 class="fs-2 text-body-emphasis">Nombre: ${dish.name}</h3>
                     <p>Descripción: ${dish.description}.</p>
-                    <button type="button" class="btn btn-sm btn-outline-secondary" id="btnInfo" data-name="${dish.name}">Info</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary btnInfo" id="btnInfo" data-name="${dish.name}">Info</button>
                 </div>
             </div>
         </div>
@@ -221,11 +246,13 @@ class RestauranteView {
 
     obtenerDishesAleatorios(iterable) {
         const dishes = [...iterable];
-        // Generar tres números aleatorios entre 0 y la longitud del array de dishes
-        const aleatorios = Array.from({ length: 3 }, () => Math.floor(Math.random() * dishes.length));
-        // Devolver los dishes correspondientes a las posiciones aleatorias generadas
-        return aleatorios.map(posicion => dishes[posicion]);
-
+        const aleatorios = [];
+        for (let i = 0; i < 3; i++) {
+            const randomIndex = Math.floor(Math.random() * dishes.length);
+            aleatorios.push(dishes[randomIndex]);
+            dishes.splice(randomIndex, 1);
+        }
+        return aleatorios;
     }
 
     showDishes(dishes) {
@@ -235,7 +262,7 @@ class RestauranteView {
             this.dishes.insertAdjacentHTML('beforeend', `
             <div class="col">
             <div class="card shadow-sm">
-            <img src="${dish.image}" alt="${dish.name}">
+            <img src="${dish.image}" alt="${dish.name}" class="card-img-top" style="height: 300px; object-fit: cover;">
                 <div class="card-body">
                 <p class="card-text">${dish.name}</p>
                 <div class="d-flex justify-content-between align-items-center">
@@ -307,16 +334,6 @@ class RestauranteView {
 
     }
 
-    bindCategoriesMain(handler) {
-        for (const buttom of this.categories.children) {
-            buttom.addEventListener('click', (event) => {
-                handler(event.target.dataset.cat);
-            });
-        }
-    }
-
-
-
     //Ventana Info
     showDishInfoWindows(dish, message = "") {
         let main = this.infoWindow.document.querySelector('main');
@@ -324,7 +341,6 @@ class RestauranteView {
         main.replaceChildren();
         header.replaceChildren();
         if (dish) {
-            console.log(dish);
             this.infoWindow.document.title = `${dish.name}`;
             header.insertAdjacentHTML('beforeend', `<h1 dataname="${dish.name}" class="display-5">${dish.name}</h1>`);
             main.insertAdjacentHTML('beforeend', `
@@ -335,7 +351,7 @@ class RestauranteView {
                 <div class="row">
                     <div class="col-md-12">
                         <div class="images p-3">
-                            <div class="text-center p-4"> <img id="main-image" src="${dish.image}" /> </div>
+                            <div class="text-center p-4"> <img id="main-image" src="${dish.image}" width="50%" height="50%" /> </div>
                         </div>
                     </div>
                     <div class="col-md-12">
@@ -353,7 +369,7 @@ class RestauranteView {
     </div>
     <br><br>
             `);
-            main.insertAdjacentHTML('beforeend', '<button class="btn btnprimary text-uppercase m-2 px-4"onClick = "window.close()" > Cerrar</button > ');
+            main.insertAdjacentHTML('beforeend', '<button class="btn btn-danger" onClick = "window.close()" > Cerrar</button > ');
         }
         else {
             main = document.createElement('div');
@@ -380,6 +396,17 @@ class RestauranteView {
                 this.infoWindow.focus();
             }
         });
+    }
+
+    //Cerrar ventana auxiliar
+    bindCloseWindow() {
+        if (this.closeButton) {
+            this.closeButton.addEventListener('click', () => {
+                if (this.infoWindow && !this.infoWindow.closed) {
+                    this.infoWindow.close();
+                }
+            });
+        }
     }
 }
 export default RestauranteView;
