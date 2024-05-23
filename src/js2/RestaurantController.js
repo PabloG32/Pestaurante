@@ -29,6 +29,7 @@ class RestaurantController {
 
     onLoad = () => {
         this.createData();
+        this.onDishes();
 
     };
 
@@ -64,6 +65,8 @@ class RestaurantController {
         this[VIEW].bindDishesMenu(this.handlerShowDish);
         this[VIEW].showDishes(dishes);
         this[VIEW].bindDishes(this.handlerShowDish);
+        this[VIEW].bindNewDIsh(this.handlerNewDish);
+        this[VIEW].bindDelDIsh(this.handlerDelDish);
     }
 
     createData() {
@@ -213,6 +216,7 @@ class RestaurantController {
         const dish = this[MODEL].createDish(name);
         this[VIEW].showDishesMain(dish);
         this[VIEW].bindShowDishInfoWindows(this.handlerShowDishInfoWindows);
+        this.onDishes();
     }
 
     handlerShowCategoryDishes = (name) => {
@@ -229,5 +233,45 @@ class RestaurantController {
             this[VIEW].showDishInfoWindows(null, "No existe")
         }
     }
+
+    //Creacion de platos
+    handlerNewDish = () => {
+        this[VIEW].showNewDishForm();
+        this[VIEW].bindNewDishForm(this.handleCreateDish);
+    }
+
+    handleCreateDish = (name, image, desc) => {
+        const dish = this[MODEL].createDish(name, desc, [], image);
+        let done; let
+            error;
+        try {
+            this[MODEL].addDish(dish);
+            done = true;
+        } catch (exception) {
+            done = false;
+            error = exception;
+        }
+        this[VIEW].showNewDishModal(done, dish, error);
+    };
+
+    //Formulario de borrado de platos
+    handlerDelDish = () => {
+        this[VIEW].showDelDishForm(this[MODEL].dishes);
+        this[VIEW].bindDelDishForm(this.handleRemoveDish, this.handlerShowDish);
+    }
+
+    handleRemoveDish = (name) => {
+        let done; let error; let dish;
+        try {
+            dish = this[MODEL].createDish(name);
+            this[MODEL].removeDish(dish);
+            done = true;
+            this.onDishes();
+        } catch (exception) {
+            done = false;
+            error = exception;
+        }
+        this[VIEW].showDelDishModal(done, dish, error);
+    };
 }
 export default RestaurantController;

@@ -1,7 +1,9 @@
+import { newDishValidation, newProductValidation } from '../js2/validation.js';
 const EXCECUTE_HANDLER = Symbol('excecuteHandler');
 class RestauranteView {
     constructor() {
         this.main = document.getElementsByTagName('main')[0];
+        this.header = document.getElementsByTagName('header')[0];
         this.categoriesMenu = document.getElementById('categories-menu');
         this.allergenesMenu = document.getElementById('allergenes-menu');
         this.menusMenu = document.getElementById('menus-menu');
@@ -13,6 +15,9 @@ class RestauranteView {
         this.dishesCategory = document.getElementById('platosCategorias');
         this.infoWindow = null;
         this.closeButton = document.getElementById('closeWindow');
+        this.newDish = document.getElementById('newDish');
+        this.delDish = document.getElementById('delDish');
+
     }
 
     // [EXCECUTE_HANDLER](handler, handlerArguments, scrollElement, data, url, event) {
@@ -207,15 +212,24 @@ class RestauranteView {
 
     //Platos
     showDishesMenu(dishes) {
-        this.dishesMenu.replaceChildren();
+        const navCats = document.getElementById('navCats');
+        const container = navCats.nextElementSibling;
+        container.replaceChildren();
         for (const dish of dishes) {
             this.dishesMenu.insertAdjacentHTML('beforeend', `<li><a data-dishes="${dish.name}" class="dropdown-item" href="#">${dish.name}</a></li>`)
         }
     }
 
     bindDishesMenu(handler) {
-        for (const a of this.dishesMenu.children) {
-            a.firstElementChild.addEventListener('click', (event) => {
+        // for (const a of this.dishesMenu.children) {
+        //     a.firstElementChild.addEventListener('click', (event) => {
+        //         handler(event.currentTarget.dataset.dishes);
+        //     });
+        // }
+        const navCats = document.getElementById('navCats');
+        const links = navCats.nextElementSibling.querySelectorAll('a');
+        for (const link of links) {
+            link.addEventListener('click', (event) => {
                 handler(event.currentTarget.dataset.dishes);
             });
         }
@@ -407,6 +421,216 @@ class RestauranteView {
                 }
             });
         }
+    }
+
+
+
+
+
+
+    //Formulario para crear un nuevo plato
+    bindNewDIsh(handler) {
+        this.newDish.addEventListener('click', (event) => {
+            handler(event.currentTarget.dataset);
+        });
+    }
+
+    showNewDishForm() {
+        this.main.replaceChildren();
+        const container = document.createElement('div');
+        container.classList.add('container');
+        container.classList.add('my-3');
+        container.id = 'new-dish';
+        container.insertAdjacentHTML(
+            'afterbegin',
+            '<h1 class="display-5">Nuevo plato</h1>',
+        );
+        container.insertAdjacentHTML(
+            'beforeend',
+            `<form name="fNewDish" role="form" class="row g-3" novalidate>
+        <div class="col-md-6 mb-3">
+        <label class="form-label" for="ncName">Nombre*</label>
+        <div class="input-group">
+        <span class="input-group-text"><i class="bi bi-type"></i></span>
+        <input type="text" class="form-control" id="ncName"
+        name="ncName"
+        placeholder="Nombre del plato" value="" required>
+        <div class="invalid-feedback">El nombre es obligatorio.</div>
+        <div class="valid-feedback">Correcto.</div>
+        </div>
+        </div>
+        <div class="col-md-6 mb-3">
+        <label class="form-label" for="ncUrl">URL de la imagen*</label>
+        <div class="input-group">
+        <span class="input-group-text"><i class="bi bi-fileimage"></i></span>
+        <input type="url" class="form-control" id="ncUrl" name="ncUrl"
+        placeholder="URL de la imagen"
+        value="" required>
+        <div class="invalid-feedback">La URL no es válida.</div>
+        <div class="valid-feedback">Correcto.</div>
+        </div>
+        </div>
+        <div class="col-md-12 mb-3">
+        <label class="form-label" for="ncDescription">Descripción*</label>
+        <div class="input-group">
+        <span class="input-group-text"><i class="bi bi-bodytext"></i></span>
+        <input type="text" class="form-control" id="ncDescription"
+        name="ncDescription" value="" required>
+        <div class="invalid-feedback">La descripción es obligatoria.</div>
+        <div class="valid-feedback">Correcto.</div>
+        </div>
+        </div>
+        <div class="mb-12">
+        <button class="btn btn-primary" type="submit">Enviar</button>
+        <button class="btn btn-primary" type="reset">Cancelar</button>
+        </div>
+        </form>`,
+        );
+        this.main.append(container);
+    }
+
+    bindNewDishForm(handler) {
+        newDishValidation(handler);
+    }
+
+    showNewDishModal(done, dish, error) {
+        const messageModalContainer = document.getElementById('messageModal');
+        const messageModal = new bootstrap.Modal('#messageModal');
+        const title = document.getElementById('messageModalTitle');
+        title.innerHTML = 'Nuevo plato';
+        const body = messageModalContainer.querySelector('.modal-body');
+        body.replaceChildren();
+        if (done) {
+            body.insertAdjacentHTML('afterbegin', `<div class="p-3">El plato
+        <strong>${dish.name}</strong> ha sido añadido correctamente.</div>`);
+        } else {
+            body.insertAdjacentHTML(
+                'afterbegin',
+                `<div class="error text-danger p-3"><i class="bi bi-exclamationtriangle"></i> El plato <strong>${dish.name}</strong> ya está
+        creado.</div>`,
+            );
+        }
+        messageModal.show();
+        const listener = (event) => {
+            if (done) {
+                document.fNewDish.reset();
+            }
+            document.fNewDish.ncName.focus();
+        };
+        messageModalContainer.addEventListener('hidden.bs.modal', listener, {
+            once: true
+        });
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //Formulario para borrar un plato
+    showDelDishForm(dishes) {
+        this.main.replaceChildren();
+        const container = document.createElement('div');
+        container.classList.add('container');
+        container.classList.add('my-3');
+        container.id = 'remove-dish';
+        container.insertAdjacentHTML(
+            'afterbegin',
+            '<h1 class="display-5">Eliminar un plato</h1>',
+        );
+        const row = document.createElement('div');
+        row.classList.add('row');
+        for (const dish of dishes) {
+            row.insertAdjacentHTML('beforeend', `<div class="col-lg-3 col-md-6">
+        <div class="dish-list-image"><img src="${dish.image}" alt="${dish.name}" class="card-img-top" style="height: 300px; object-fit: cover;"/>
+        </div>
+        
+        <div class="dish-list-text">
+        <a data-dish="${dish.name}"><h3>${dish.name}</h3></a>
+        </div>
+        <div><button class="btn btn-primary" data-dish="${dish.name}" type='button'>Eliminar</button></div>
+        <br>
+        </div>`);
+        }
+        container.append(row);
+        this.main.append(container);
+    }
+
+    //Borrar plato
+    bindDelDIsh(handler) {
+        this.delDish.addEventListener('click', (event) => {
+            handler(event.currentTarget.dataset);
+        });
+    }
+
+    bindDelDishForm(delHandler) {
+        const removeContainer = document.getElementById('remove-dish');
+        const buttons = removeContainer.getElementsByTagName('button');
+        for (const button of buttons) {
+            button.addEventListener('click', function (event) {
+                delHandler(this.dataset.dish);
+            });
+        }
+        const categoryLinks = removeContainer.querySelectorAll('a[data-dish]');
+    }
+
+    //Modal del borrado de platos
+    showDelDishModal(done, dish, error) {
+        const messageModalContainer = document.getElementById('messageModal');
+        const messageModal = new bootstrap.Modal('#messageModal');
+        const title = document.getElementById('messageModalTitle');
+        title.innerHTML = 'Borrado de platos';
+        const body = messageModalContainer.querySelector('.modal-body');
+        body.replaceChildren();
+        if (done) {
+            body.insertAdjacentHTML('afterbegin', `<div class="p-3">El plato
+        <strong>${dish.name}</strong> ha sido eliminado correctamente.</div>`);
+        } else {
+            body.insertAdjacentHTML(
+                'afterbegin',
+                `<div class="error text-danger p-3"><i class="bi bi-exclamationtriangle"></i> El plato <strong>${dish.name}</strong> no se ha podido borrar.</div>`,
+            );
+        }
+        messageModal.show();
+        const listener = (event) => {
+            if (done) {
+                const removeDish = document.getElementById('remove-dish');
+                const button = removeDish.querySelector(`button.btn[data-dish="${dish.name}"]`);
+                button.parentElement.parentElement.remove();
+            }
+        };
+        messageModalContainer.addEventListener('hidden.bs.modal', listener, {
+            once: true
+        });
     }
 }
 export default RestauranteView;
