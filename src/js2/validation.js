@@ -80,100 +80,40 @@ function newDishValidation(handler) {
 
     form.ncName.addEventListener('change', defaultCheckElement);
     form.ncUrl.addEventListener('change', defaultCheckElement);
+    form.ncDescription.addEventListener('change', defaultCheckElement);
 }
 
-function newProductValidation(handler) {
-    const form = document.forms.fNewProduct;
-    form.setAttribute('novalidate', '');
-
+function newCatValidation(handler) {
+    const form = document.forms.fNewCat;
+    form.setAttribute('novalidate', true);
     form.addEventListener('submit', function (event) {
         let isValid = true;
         let firstInvalidElement = null;
 
-        this.npDescription.value = this.npDescription.value.trim();
-        showFeedBack(this.npDescription, true);
+        this.ncDescription.value = this.ncDescription.value.trim();
+        showFeedBack(this.ncDescription, true);
 
-        if (!this.npCategories.checkValidity()) {
+        if (!this.ncDescription.checkValidity()) {
             isValid = false;
-            showFeedBack(this.npCategories, false);
-            firstInvalidElement = this.npCategories;
+            showFeedBack(this.ncDescription, false);
+            firstInvalidElement = this.ncDescription;
         } else {
-            showFeedBack(this.npCategories, true);
+            showFeedBack(this.ncDescription, true);
         }
 
-        if (!this.npUrl.checkValidity()) {
+        if (!this.ncName.checkValidity()) {
             isValid = false;
-            showFeedBack(this.npUrl, false);
-            firstInvalidElement = this.npUrl;
+            showFeedBack(this.ncName, false);
+            firstInvalidElement = this.ncName;
         } else {
-            showFeedBack(this.npUrl, true);
-        }
-
-        if (!this.npTax.checkValidity()) {
-            isValid = false;
-            showFeedBack(this.npTax, false);
-            firstInvalidElement = this.npTax;
-        } else {
-            showFeedBack(this.npTax, true);
-        }
-
-        if (!this.npPrice.checkValidity()) {
-            isValid = false;
-            showFeedBack(this.npPrice, false);
-            firstInvalidElement = this.npPrice;
-        } else {
-            showFeedBack(this.npPrice, true);
-        }
-
-        if (!this.npType.checkValidity()) {
-            isValid = false;
-            showFeedBack(this.npType, false);
-            firstInvalidElement = this.cType;
-        } else {
-            showFeedBack(this.npType, true);
-        }
-
-        if (!this.npModel.checkValidity()) {
-            isValid = false;
-            showFeedBack(this.npModel, false);
-            firstInvalidElement = this.npModel;
-        } else {
-            showFeedBack(this.npModel, true);
-        }
-
-        if (!this.npBrand.checkValidity()) {
-            isValid = false;
-            showFeedBack(this.npBrand, false);
-            firstInvalidElement = this.npBrand;
-        } else {
-            showFeedBack(this.npBrand, true);
-        }
-
-        if (!this.npSerial.checkValidity()) {
-            isValid = false;
-            showFeedBack(this.npSerial, false);
-            firstInvalidElement = this.npSerial;
-        } else {
-            showFeedBack(this.npSerial, true);
+            showFeedBack(this.ncName, true);
         }
 
         if (!isValid) {
             firstInvalidElement.focus();
         } else {
-            const categories = [...this.npCategories.selectedOptions].map((option) => option.value);
-            handler(
-                Number.parseInt(this.npSerial.value),
-                this.npBrand.value,
-                this.npModel.value,
-                this.npType.value,
-                this.npPrice.value,
-                this.npTax.value,
-                this.npUrl.value,
-                this.npDescription.value,
-                categories,
-            );
+            handler(this.ncName.value, this.ncDescription.value);
         }
-
         event.preventDefault();
         event.stopPropagation();
     });
@@ -187,17 +127,63 @@ function newProductValidation(handler) {
             input.classList.remove('is-valid');
             input.classList.remove('is-invalid');
         }
-        this.npSerial.focus();
+        this.ncName.focus();
     }));
 
-    form.npSerial.addEventListener('change', defaultCheckElement);
-    form.npBrand.addEventListener('change', defaultCheckElement);
-    form.npModel.addEventListener('change', defaultCheckElement);
-    form.npType.addEventListener('change', defaultCheckElement);
-    form.npPrice.addEventListener('change', defaultCheckElement);
-    form.npTax.addEventListener('change', defaultCheckElement);
-    form.npUrl.addEventListener('change', defaultCheckElement);
-    form.npDescription.addEventListener('change', defaultCheckElement);
+    form.ncName.addEventListener('change', defaultCheckElement);
+    form.ncDescription.addEventListener('change', defaultCheckElement);
 }
 
-export { newDishValidation, newProductValidation };
+function newRestaurantValidation(handler) {
+    const form = document.forms.fNewRestaurant;
+    form.setAttribute('novalidate', true);
+    form.addEventListener('submit', function (event) {
+        let isValid = true;
+        let firstInvalidElement = null;
+
+        this.nrDescription.value = this.nrDescription.value.trim();
+        showFeedBack(this.nrDescription, true);
+
+        if (!this.nrDescription.checkValidity()) {
+            isValid = false;
+            showFeedBack(this.nrDescription, false);
+            firstInvalidElement = this.nrDescription;
+        } else {
+            showFeedBack(this.nrDescription, true);
+        }
+
+        if (!this.nrName.checkValidity()) {
+            isValid = false;
+            showFeedBack(this.nrName, false);
+            firstInvalidElement = this.nrName;
+        } else {
+            showFeedBack(this.nrName, true);
+        }
+
+        if (!isValid) {
+            firstInvalidElement.focus();
+        } else {
+            handler(this.nrName.value, this.nrDescription.value);
+        }
+        event.preventDefault();
+        event.stopPropagation();
+    });
+
+    form.addEventListener('reset', (function (event) {
+        for (const div of this.querySelectorAll('div.valid-feedback, div.invalid-feedback')) {
+            div.classList.remove('d-block');
+            div.classList.add('d-none');
+        }
+        for (const input of this.querySelectorAll('input')) {
+            input.classList.remove('is-valid');
+            input.classList.remove('is-invalid');
+        }
+        this.nrName.focus();
+    }));
+
+    form.nrName.addEventListener('change', defaultCheckElement);
+    form.nrDescription.addEventListener('change', defaultCheckElement);
+}
+
+
+export { newDishValidation, newCatValidation, newRestaurantValidation };

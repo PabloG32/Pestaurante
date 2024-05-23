@@ -39,6 +39,8 @@ class RestaurantController {
         this[VIEW].bindCategoriesMenu(this.handlerShowCategory);
         this[VIEW].showCategories(categories);
         this[VIEW].bindCategoriesMain(this.handlerShowCategoryDishes);
+        this[VIEW].bindNewCat(this.handlerNewCat);
+        this[VIEW].bindDelCat(this.handlerDelCat);
     }
 
     onAllergenes() {
@@ -57,6 +59,7 @@ class RestaurantController {
         const restaurants = this[MODEL].restaurants;
         this[VIEW].showRestaurantsMenu(restaurants);
         this[VIEW].bindRestaurantsMenu(this.handlerShowRestaurant);
+        this[VIEW].bindNewRestaurant(this.handlerNewRestaurant);
     }
 
     onDishes() {
@@ -255,7 +258,7 @@ class RestaurantController {
         this[VIEW].showNewDishModal(done, dish, error);
     };
 
-    //Formulario de borrado de platos
+    //Borrado de platos
     handlerDelDish = () => {
         this[VIEW].showDelDishForm(this[MODEL].dishes);
         this[VIEW].bindDelDishForm(this.handleRemoveDish, this.handlerShowDish);
@@ -273,6 +276,68 @@ class RestaurantController {
             error = exception;
         }
         this[VIEW].showDelDishModal(done, dish, error);
+    };
+
+    //Nueva categoria
+    handlerNewCat = () => {
+        this[VIEW].showNewCatForm();
+        this[VIEW].bindNewCatForm(this.handleCreateCat);
+    }
+
+    handleCreateCat = (name, desc) => {
+        const cat = this[MODEL].createCategory(name, desc);
+        let done; let
+            error;
+        try {
+            this[MODEL].addCategory(cat);
+            done = true;
+            this.onCategories();
+        } catch (exception) {
+            done = false;
+            error = exception;
+        }
+        this[VIEW].showNewCatModal(done, cat, error);
+    };
+
+    //Borrado de categorias
+    handlerDelCat = () => {
+        this[VIEW].showDelCatForm(this[MODEL].categories);
+        this[VIEW].bindDelCatForm(this.handleRemoveCat, this.handlerShowCategory);
+    }
+
+    handleRemoveCat = (name) => {
+        let done; let error; let cat;
+        try {
+            cat = this[MODEL].createCategory(name);
+            this[MODEL].removeCategory(cat);
+            done = true;
+            this.onCategories();
+        } catch (exception) {
+            done = false;
+            error = exception;
+        }
+        this[VIEW].showDelCatModal(done, cat, error);
+    };
+
+    //Nuevo restaurante
+    handlerNewRestaurant = () => {
+        this[VIEW].showNewRestaurantForm();
+        this[VIEW].bindNewRestaurantForm(this.handleCreateRestaurant);
+    }
+
+    handleCreateRestaurant = (name, desc) => {
+        const restaurant = this[MODEL].createRestaurant(name, desc);
+        let done; let
+            error;
+        try {
+            this[MODEL].addRestaurant(restaurant);
+            done = true;
+            this.onRestaurants();
+        } catch (exception) {
+            done = false;
+            error = exception;
+        }
+        this[VIEW].showNewRestaurantModal(done, restaurant, error);
     };
 }
 export default RestaurantController;
