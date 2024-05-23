@@ -247,6 +247,7 @@ class RestaurantController {
         try {
             this[MODEL].addDish(dish);
             done = true;
+            this.onDishes();
         } catch (exception) {
             done = false;
             error = exception;
