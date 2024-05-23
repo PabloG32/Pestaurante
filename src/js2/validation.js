@@ -30,37 +30,37 @@ function newDishValidation(handler) {
         let isValid = true;
         let firstInvalidElement = null;
 
-        this.ncDescription.value = this.ncDescription.value.trim();
-        showFeedBack(this.ncDescription, true);
+        this.ndDescription.value = this.ndDescription.value.trim();
+        showFeedBack(this.ndDescription, true);
 
-        if (!this.ncUrl.checkValidity()) {
+        if (!this.ndUrl.checkValidity()) {
             isValid = false;
-            showFeedBack(this.ncUrl, false);
-            firstInvalidElement = this.ncUrl;
+            showFeedBack(this.ndUrl, false);
+            firstInvalidElement = this.ndUrl;
         } else {
-            showFeedBack(this.ncUrl, true);
+            showFeedBack(this.ndUrl, true);
         }
 
-        if (!this.ncDescription.checkValidity()) {
+        if (!this.ndDescription.checkValidity()) {
             isValid = false;
-            showFeedBack(this.ncDescription, false);
-            firstInvalidElement = this.ncUrl;
+            showFeedBack(this.ndDescription, false);
+            firstInvalidElement = this.ndUrl;
         } else {
-            showFeedBack(this.ncDescription, true);
+            showFeedBack(this.ndDescription, true);
         }
 
-        if (!this.ncName.checkValidity()) {
+        if (!this.ndName.checkValidity()) {
             isValid = false;
-            showFeedBack(this.ncName, false);
-            firstInvalidElement = this.ncName;
+            showFeedBack(this.ndName, false);
+            firstInvalidElement = this.ndName;
         } else {
-            showFeedBack(this.ncName, true);
+            showFeedBack(this.ndName, true);
         }
 
         if (!isValid) {
             firstInvalidElement.focus();
         } else {
-            handler(this.ncName.value, this.ncUrl.value, this.ncDescription.value);
+            handler(this.ndName.value, this.ndUrl.value, this.ndDescription.value);
         }
         event.preventDefault();
         event.stopPropagation();
@@ -75,12 +75,12 @@ function newDishValidation(handler) {
             input.classList.remove('is-valid');
             input.classList.remove('is-invalid');
         }
-        this.ncName.focus();
+        this.ndName.focus();
     }));
 
-    form.ncName.addEventListener('change', defaultCheckElement);
-    form.ncUrl.addEventListener('change', defaultCheckElement);
-    form.ncDescription.addEventListener('change', defaultCheckElement);
+    form.ndName.addEventListener('change', defaultCheckElement);
+    form.ndUrl.addEventListener('change', defaultCheckElement);
+    form.ndDescription.addEventListener('change', defaultCheckElement);
 }
 
 function newCatValidation(handler) {

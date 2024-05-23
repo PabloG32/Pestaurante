@@ -41,6 +41,7 @@ class RestaurantController {
         this[VIEW].bindCategoriesMain(this.handlerShowCategoryDishes);
         this[VIEW].bindNewCat(this.handlerNewCat);
         this[VIEW].bindDelCat(this.handlerDelCat);
+        //this[VIEW].bindDishToMenu(this.handlerAsigDishMenu);
     }
 
     onAllergenes() {
@@ -339,5 +340,10 @@ class RestaurantController {
         }
         this[VIEW].showNewRestaurantModal(done, restaurant, error);
     };
+
+    //CatToDish
+    handlerAsigDishMenu = () => {
+        this[VIEW].showDishToMenu(this[MODEL].dishes, this[MODEL].menus);
+    }
 }
 export default RestaurantController;

@@ -20,6 +20,7 @@ class RestauranteView {
         this.newCat = document.getElementById('newCategory');
         this.delCat = document.getElementById('delCategory');
         this.newRestaurant = document.getElementById('newRestaurant');
+        this.asigDishMenu = document.getElementById('asigDishMenu');
 
     }
 
@@ -452,7 +453,7 @@ class RestauranteView {
             <div class="col-md-6 mb-3">
                 <div class="input-group mb-3">
                     <span class="input-group-text" id="inputGroup-sizing-default">Nombre*</span>
-                    <input type="text" class="form-control" id="ncName" name="ncName" placeholder="Nombre del plato" value=""
+                    <input type="text" class="form-control" id="ndName" name="ndName" placeholder="Nombre del plato" value=""
                         required>
                     <div class="invalid-feedback">El nombre es obligatorio.</div>
                     <div class="valid-feedback">Correcto.</div>
@@ -461,7 +462,7 @@ class RestauranteView {
             <div class="col-md-6 mb-3">
                 <div class="input-group mb-3">
                     <span class="input-group-text" id="inputGroup-sizing-default">URL de la imagen*</span>
-                    <input type="url" class="form-control" id="ncUrl" name="ncUrl" placeholder="URL de la imagen" value=""
+                    <input type="url" class="form-control" id="ndUrl" name="ndUrl" placeholder="URL de la imagen" value=""
                         required>
                     <div class="invalid-feedback">La URL no es válida.</div>
                     <div class="valid-feedback">Correcto.</div>
@@ -470,7 +471,7 @@ class RestauranteView {
             <div class="col-md-12 mb-3">
                 <div class="input-group mb-3">
                     <span class="input-group-text" id="inputGroup-sizing-default">Descripción*</span>
-                    <input type="text" class="form-control" id="ncDescription" name="ncDescription"
+                    <input type="text" class="form-control" id="ndDescription" name="ndDescription"
                         placeholder="Descripción del plato" value="" required>
                     <div class="invalid-feedback">La descripción es obligatoria.</div>
                     <div class="valid-feedback">Correcto.</div>
@@ -836,5 +837,101 @@ class RestauranteView {
             once: true
         });
     }
+
+    //----------------------------------------------Platos a menu-------------------------------------------------------------
+    //Modificar cat de un plato
+    bindDishToMenu(handler) {
+        this.asigDishMenu.addEventListener('click', (event) => {
+            handler(event.currentTarget.dataset);
+        });
+    }
+
+    //Formulario para asignar o desasignar un plato de un menu
+    showDishToMenu(dishes, menus) {
+        this.main.replaceChildren();
+        const container = document.createElement('div');
+        container.classList.add('container');
+        container.classList.add('my-3');
+        container.id = 'assig-DishToMenu';
+
+        container.insertAdjacentHTML(
+            'afterbegin',
+            `<h1 class="display-5">Platos y Menús</h1>
+            <br>
+            `,
+        );
+
+        const form = document.createElement('form');
+        form.name = 'fassigDishToMenu';
+        form.setAttribute('role', 'form');
+        form.setAttribute('novalidate', '');
+        form.classList.add('row');
+        form.classList.add('g-3');
+
+        form.insertAdjacentHTML(
+            'beforeend',
+            `<div class="col-md-6 mb-3">
+                 <div class="input-group">
+                    <span class="input-group-text" id="inputGroup-sizing-default">Plato</span>
+                     <select class="form-select" name="asDishes" id="asDishes">
+                         <option selected>Selecciona un plato...</option>
+                     </select>
+                 </div>
+             </div>`,
+        );
+
+        form.insertAdjacentHTML(
+            'beforeend',
+            `<div class="col-md-6 mb-3">
+                 <div class="input-group mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-default">Menú</span>
+                     <select class="form-select" name="asMenus" id="asMenus">
+                         <option selected>Selecciona un menú...</option>
+                     </select>
+                 </div>
+             </div>`,
+        );
+
+        form.insertAdjacentHTML(
+            'beforeend',
+            `<div class="col-md-12 mb-3">
+                 <button class="btn btn-primary" id="assignButton" type="submit">Asignar</button>
+                 <button class="btn btn-primary">Desasignar</button>
+             </div>`,
+        );
+
+        const asDishes = form.querySelector('#asDishes');
+        for (const dish of dishes) {
+            asDishes.insertAdjacentHTML('beforeend', `<option value="${dish.name}">${dish.name}</option>`);
+        }
+
+        const asMenus = form.querySelector('#asMenus');
+        for (const menu of menus) {
+            asMenus.insertAdjacentHTML('beforeend', `<option value="${menu.name}">${menu.name}</option>`);
+        }
+
+        container.append(form);
+        container.insertAdjacentHTML(
+            'beforeend',
+            '<div id="product-list" class="container my-3"><div class="row"></div></div>',
+        );
+
+        this.main.append(container);
+
+        const assignButton = document.getElementById('assignButton');
+        assignButton.addEventListener('click', () => {
+            const selectedDish = asDishes.value;
+            const selectedMenu = asMenus.value;
+
+            if (selectedDish === 'Selecciona un plato...' || selectedMenu === 'Selecciona un menú...') {
+                alert('Por favor, seleccione tanto un plato como un menú.');
+                return;
+            } else {
+                alert(`El plato "${selectedDish}" ha sido asignado al menú "${selectedMenu}".`);
+            }
+        });
+    }
+
+
 }
 export default RestauranteView;
