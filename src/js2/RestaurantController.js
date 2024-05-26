@@ -1,3 +1,4 @@
+import { getCookie } from './util.js';
 const MODEL = Symbol('RestaurantModel');
 const VIEW = Symbol('RestaurantView');
 
@@ -31,6 +32,11 @@ class RestaurantController {
         this[VIEW].showAdminMenu();
         this.createData();
         this.onDishes();
+
+        if (getCookie('accetedCookieMessage') !== 'true') {
+            this[VIEW].showCookiesMessage();
+        }
+
 
     };
 
