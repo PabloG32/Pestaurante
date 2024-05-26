@@ -28,6 +28,7 @@ class RestaurantController {
     }
 
     onLoad = () => {
+        this[VIEW].showAdminMenu();
         this.createData();
         this.onDishes();
 
@@ -41,7 +42,7 @@ class RestaurantController {
         this[VIEW].bindCategoriesMain(this.handlerShowCategoryDishes);
         this[VIEW].bindNewCat(this.handlerNewCat);
         this[VIEW].bindDelCat(this.handlerDelCat);
-        //this[VIEW].bindDishToMenu(this.handlerAsigDishMenu);
+        this[VIEW].bindDishToMenu(this.handlerAsigDishMenu);
     }
 
     onAllergenes() {

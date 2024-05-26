@@ -4,6 +4,7 @@ class RestauranteView {
     constructor() {
         this.main = document.getElementsByTagName('main')[0];
         this.header = document.getElementsByTagName('header')[0];
+        this.menu = document.querySelector('.navbar-nav');
         this.categoriesMenu = document.getElementById('categories-menu');
         this.allergenesMenu = document.getElementById('allergenes-menu');
         this.menusMenu = document.getElementById('menus-menu');
@@ -15,12 +16,6 @@ class RestauranteView {
         this.dishesCategory = document.getElementById('platosCategorias');
         this.infoWindow = null;
         this.closeButton = document.getElementById('closeWindow');
-        this.newDish = document.getElementById('newDish');
-        this.delDish = document.getElementById('delDish');
-        this.newCat = document.getElementById('newCategory');
-        this.delCat = document.getElementById('delCategory');
-        this.newRestaurant = document.getElementById('newRestaurant');
-        this.asigDishMenu = document.getElementById('asigDishMenu');
 
     }
 
@@ -428,11 +423,34 @@ class RestauranteView {
     }
 
 
+
+    showAdminMenu() {
+        const menuOption = document.createElement('li');
+        menuOption.classList.add('nav-item');
+        menuOption.classList.add('dropdown');
+        menuOption.insertAdjacentHTML(
+            'afterbegin',
+            '<a class="nav-link dropdown-toggle" href="#" id="navServices" role="button" data-bs-toggle="dropdown" aria-expanded="false">Adminitración</a>',
+        );
+        const suboptions = document.createElement('ul');
+        suboptions.classList.add('dropdown-menu');
+        suboptions.insertAdjacentHTML('beforeend', '<li><a id="newDish" class="dropdown-item" href="#">Añadir plato</a></li>');
+        suboptions.insertAdjacentHTML('beforeend', '<li><a id="delDish" class="dropdown-item" href="#">Eliminar plato</a></li>');
+        suboptions.insertAdjacentHTML('beforeend', '<li><a id="asigDishMenu" class="dropdown-item" href="#">Asignar/Des platos a menus</a></li>');
+        suboptions.insertAdjacentHTML('beforeend', '<li><a id="newCategory" class="dropdown-item" href="#">Añadir categoria</a></li>');
+        suboptions.insertAdjacentHTML('beforeend', '<li><a id="delCategory" class="dropdown-item" href="#">Eliminar categoria</a></li>');
+        suboptions.insertAdjacentHTML('beforeend', '<li><a id="newRestaurant" class="dropdown-item" href="#">Añadir restaurante</a></li>');
+        suboptions.insertAdjacentHTML('beforeend', '<li><a id="modCatDish" class="dropdown-item" href="#">Modificar categoria de un plato</a>');
+        menuOption.append(suboptions);
+        this.menu.append(menuOption);
+    }
+
     //--------------------------------------------------------------PLATO----------------------------------------------------------
     //Añadir un plato
     bindNewDIsh(handler) {
-        this.newDish.addEventListener('click', (event) => {
-            handler(event.currentTarget.dataset);
+        const newDish = document.getElementById('newDish');
+        newDish.addEventListener('click', (event) => {
+            handler();
         });
     }
 
@@ -514,7 +532,7 @@ class RestauranteView {
             if (done) {
                 document.fNewDish.reset();
             }
-            document.fNewDish.ncName.focus();
+            document.fNewDish.ndName.focus();
         };
         messageModalContainer.addEventListener('hidden.bs.modal', listener, {
             once: true
@@ -523,8 +541,9 @@ class RestauranteView {
 
     //Borrar plato
     bindDelDIsh(handler) {
-        this.delDish.addEventListener('click', (event) => {
-            handler(event.currentTarget.dataset);
+        const delDish = document.getElementById('delDish');
+        delDish.addEventListener('click', (event) => {
+            handler();
         });
     }
 
@@ -601,8 +620,9 @@ class RestauranteView {
     //----------------------------------------------------CATEGORIA------------------------------------------------------------------
     //Añadir categoria
     bindNewCat(handler) {
-        this.newCat.addEventListener('click', (event) => {
-            handler(event.currentTarget.dataset);
+        const newCat = document.getElementById('newCategory');
+        newCat.addEventListener('click', (event) => {
+            handler();
         });
     }
 
@@ -683,7 +703,8 @@ class RestauranteView {
 
     //Borrar categoria
     bindDelCat(handler) {
-        this.delCat.addEventListener('click', (event) => {
+        const delCat = document.getElementById('delCategory');
+        delCat.addEventListener('click', (event) => {
             handler(event.currentTarget.dataset);
         });
     }
@@ -758,7 +779,8 @@ class RestauranteView {
     //--------------------------------------------------------------------RESTAURANTE----------------------------------------------
     //Añadir restaurante
     bindNewRestaurant(handler) {
-        this.newRestaurant.addEventListener('click', (event) => {
+        const newRestaurant = document.getElementById('newRestaurant');
+        newRestaurant.addEventListener('click', (event) => {
             handler(event.currentTarget.dataset);
         });
     }
@@ -841,10 +863,13 @@ class RestauranteView {
     //----------------------------------------------Platos a menu-------------------------------------------------------------
     //Modificar cat de un plato
     bindDishToMenu(handler) {
-        this.asigDishMenu.addEventListener('click', (event) => {
+        const asigDishMenu = document.getElementById('asigDishMenu');
+        asigDishMenu.addEventListener('click', (event) => {
             handler(event.currentTarget.dataset);
         });
     }
+
+
 
     //Formulario para asignar o desasignar un plato de un menu
     showDishToMenu(dishes, menus) {
