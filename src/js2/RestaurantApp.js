@@ -2,9 +2,10 @@ import RestaurantsManager from "./RestaurantModel.js";
 
 import RestaurantController from "./RestaurantController.js";
 import RestaurantView from "./RestaurantView.js";
+import AuthenticationService from './authentication.js';
 
 
-const RestaurantApp = new RestaurantController(RestaurantsManager.getInstance(), new RestaurantView());
+const RestaurantApp = new RestaurantController(RestaurantsManager.getInstance(), new RestaurantView(), AuthenticationService.getInstance());
 
 // const historyActions = {
 //     init: () => {

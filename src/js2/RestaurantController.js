@@ -1,18 +1,19 @@
 import { getCookie } from './util.js';
 const MODEL = Symbol('RestaurantModel');
 const VIEW = Symbol('RestaurantView');
+const AUTH = Symbol('AUTH');
+const USER = Symbol('USER');
 
 class RestaurantController {
-    constructor(RestaurantModel, viewRestaurant) {
+    constructor(RestaurantModel, viewRestaurant, auth) {
         this[MODEL] = RestaurantModel;
         this[VIEW] = viewRestaurant;
+        this[AUTH] = auth;
+        this[USER] = null;
 
         this.onLoad();
-
-        // Eventos iniciales del Controlador
         this.onInit();
         this[VIEW].bindInit(this.handleInit);
-
         this[VIEW].bindCloseWindow();
 
     }
@@ -29,7 +30,6 @@ class RestaurantController {
     }
 
     onLoad = () => {
-        this[VIEW].showAdminMenu();
         this.createData();
         this.onDishes();
 
@@ -37,7 +37,18 @@ class RestaurantController {
             this[VIEW].showCookiesMessage();
         }
 
-
+        const userCookie = getCookie('activeUser');
+        if (userCookie) {
+            const user = this[AUTH].getUser(userCookie);
+            if (user) {
+                this[USER] = user;
+                this.onOpenSession();
+            }
+        } else {
+            // this[VIEW].showIdentificationLink();
+            // this[VIEW].bindIdentificationLink(this.handleLoginForm);
+            this.onCloseSession();
+        }
     };
 
     onCategories() {
@@ -46,9 +57,7 @@ class RestaurantController {
         this[VIEW].bindCategoriesMenu(this.handlerShowCategory);
         this[VIEW].showCategories(categories);
         this[VIEW].bindCategoriesMain(this.handlerShowCategoryDishes);
-        this[VIEW].bindNewCat(this.handlerNewCat);
-        this[VIEW].bindDelCat(this.handlerDelCat);
-        this[VIEW].bindDishToMenu(this.handlerAsigDishMenu);
+
     }
 
     onAllergenes() {
@@ -67,7 +76,7 @@ class RestaurantController {
         const restaurants = this[MODEL].restaurants;
         this[VIEW].showRestaurantsMenu(restaurants);
         this[VIEW].bindRestaurantsMenu(this.handlerShowRestaurant);
-        this[VIEW].bindNewRestaurant(this.handlerNewRestaurant);
+
     }
 
     onDishes() {
@@ -76,8 +85,27 @@ class RestaurantController {
         this[VIEW].bindDishesMenu(this.handlerShowDish);
         this[VIEW].showDishes(dishes);
         this[VIEW].bindDishes(this.handlerShowDish);
+    }
+
+    onOpenSession() {
+        this.onInit();
+        this[VIEW].showAuthUserProfile(this[USER]);
+        this[VIEW].showAdminMenu();
         this[VIEW].bindNewDIsh(this.handlerNewDish);
         this[VIEW].bindDelDIsh(this.handlerDelDish);
+        this[VIEW].bindNewRestaurant(this.handlerNewRestaurant);
+        this[VIEW].bindNewCat(this.handlerNewCat);
+        this[VIEW].bindDelCat(this.handlerDelCat);
+        this[VIEW].bindDishToMenu(this.handlerAsigDishMenu);
+        this[VIEW].bindCloseSession(this.handleCloseSession);
+    }
+
+    onCloseSession() {
+        this[USER] = null;
+        this[VIEW].deleteUserCookie();
+        this[VIEW].showIdentificationLink();
+        this[VIEW].bindIdentificationLink(this.handleLoginForm);
+        this[VIEW].removeAdminMenu();
     }
 
     createData() {
@@ -352,5 +380,29 @@ class RestaurantController {
     handlerAsigDishMenu = () => {
         this[VIEW].showDishToMenu(this[MODEL].dishes, this[MODEL].menus);
     }
+
+    //---------------------------------------------USER----------------------------------------------------------------------
+    handleLoginForm = () => {
+        this[VIEW].showLogin();
+        this[VIEW].bindLogin(this.handleLogin);
+    };
+
+    handleLogin = (username, password, remember) => {
+        if (this[AUTH].validateUser(username, password)) {
+            this[USER] = this[AUTH].getUser(username);
+            this.onOpenSession();
+            if (remember) {
+                this[VIEW].setUserCookie(this[USER]);
+            }
+        } else {
+            this[VIEW].showInvalidUserMessage();
+        }
+    };
+
+    handleCloseSession = () => {
+        this.onCloseSession();
+        this.onInit();
+    };
+
 }
 export default RestaurantController;
