@@ -45,8 +45,6 @@ class RestaurantController {
                 this.onOpenSession();
             }
         } else {
-            // this[VIEW].showIdentificationLink();
-            // this[VIEW].bindIdentificationLink(this.handleLoginForm);
             this.onCloseSession();
         }
     };
@@ -98,6 +96,8 @@ class RestaurantController {
         this[VIEW].bindDelCat(this.handlerDelCat);
         this[VIEW].bindDishToMenu(this.handlerAsigDishMenu);
         this[VIEW].bindCloseSession(this.handleCloseSession);
+        this[VIEW].bindDishFav(this.handlerDishFav);
+        this[VIEW].bindVerDishFav(this.handlerVerDishFav);
     }
 
     onCloseSession() {
@@ -391,6 +391,7 @@ class RestaurantController {
         if (this[AUTH].validateUser(username, password)) {
             this[USER] = this[AUTH].getUser(username);
             this.onOpenSession();
+            this[VIEW].showMessage(this[USER]);
             if (remember) {
                 this[VIEW].setUserCookie(this[USER]);
             }
@@ -404,5 +405,34 @@ class RestaurantController {
         this.onInit();
     };
 
+
+    //---------------------------------------------------------------DISH FAV--------------------------------------------------------------
+    handlerDishFav = () => {
+        this[VIEW].showDishFav(this[MODEL].dishes);
+        this[VIEW].bindAddDishFav(this.handleAddDishFav);
+    }
+
+    handleAddDishFav = (name) => {
+        let done; let error; let dish;
+        try {
+            dish = this[MODEL].createDish(name);
+            let favoriteDishes = JSON.parse(localStorage.getItem('favoriteDishes')) || [];
+            if (!favoriteDishes.some(dish => dish.name === name)) {
+                favoriteDishes.push(dish);
+                localStorage.setItem('favoriteDishes', JSON.stringify(favoriteDishes));
+                done = true;
+            } else {
+                done = false;
+            }
+        } catch (exception) {
+            done = false;
+            error = exception;
+        }
+        this[VIEW].showAddDishModal(done, dish, error);
+    };
+
+    handlerVerDishFav = () => {
+        this[VIEW].showVerDishFav(this[VIEW].getVerDishes());
+    }
 }
 export default RestaurantController;

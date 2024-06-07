@@ -440,6 +440,8 @@ class RestauranteView {
         suboptions.insertAdjacentHTML('beforeend', '<li><a id="delCategory" class="dropdown-item" href="#">Eliminar categoria</a></li>');
         suboptions.insertAdjacentHTML('beforeend', '<li><a id="newRestaurant" class="dropdown-item" href="#">Añadir restaurante</a></li>');
         suboptions.insertAdjacentHTML('beforeend', '<li><a id="modCatDish" class="dropdown-item" href="#">Modificar categoria de un plato</a>');
+        suboptions.insertAdjacentHTML('beforeend', '<li><a id="dishFav" class="dropdown-item" href="#"> Platos favoritos</a>');
+        suboptions.insertAdjacentHTML('beforeend', '<li><a id="verDishFav" class="dropdown-item" href="#">Consultar platos favoritos</a>');
         menuOption.append(suboptions);
         this.menu.append(menuOption);
     }
@@ -1129,5 +1131,128 @@ class RestauranteView {
             });
     }
 
+    //Mostrar mensaje de bienvenida
+    showMessage(user) {
+        this.main.replaceChildren();
+        this.main.insertAdjacentHTML('afterbegin', `        
+        <h1 class="display-5 fw-bold text-body-emphasis"> Hola ${user.username}</h1>
+        `);
+    }
+
+
+
+    //-----------------------------------Plato Favorito---------------------------------------------------------------
+    bindDishFav(handler) {
+        const dishFav = document.getElementById('dishFav');
+        dishFav.addEventListener('click', (event) => {
+            handler();
+        });
+    }
+
+    showDishFav(dishes) {
+        this.main.replaceChildren();
+        const container = document.createElement('div');
+        container.classList.add('container');
+        container.classList.add('my-3');
+        container.id = 'add-dish-fav';
+        container.insertAdjacentHTML(
+            'afterbegin',
+            '<h1 class="display-5">Añadir un plato a tus favoritos</h1>',
+        );
+        const row = document.createElement('div');
+        row.classList.add('row');
+        for (const dish of dishes) {
+            row.insertAdjacentHTML('beforeend', `<div class="col-lg-3 col-md-6">
+        <div class="dish-list-image"><img src="${dish.image}" alt="${dish.name}" class="card-img-top" style="height: 300px; object-fit: cover;"/>
+        </div>
+        
+        <div class="dish-list-text">
+        <a data-dish="${dish.name}"><h3>${dish.name}</h3></a>
+        </div>
+        <div><button class="btn btn-success" data-dish="${dish.name}" type='button'>Añadir</button></div>
+        <br>
+        </div>`);
+        }
+        container.append(row);
+        this.main.append(container);
+    }
+
+    bindAddDishFav(handler) {
+        const AddDishFav = document.getElementById('add-dish-fav');
+        const buttons = AddDishFav.getElementsByTagName('button');
+        for (const button of buttons) {
+            button.addEventListener('click', function (event) {
+                handler(this.dataset.dish);
+            });
+        }
+        const categoryLinks = AddDishFav.querySelectorAll('a[add-dish-fav]');
+    }
+
+    showAddDishModal(done, dish, error) {
+        const messageModalContainer = document.getElementById('messageModal');
+        const messageModal = new bootstrap.Modal('#messageModal');
+        const title = document.getElementById('messageModalTitle');
+        title.innerHTML = 'Añadir platos a favoritos';
+        const body = messageModalContainer.querySelector('.modal-body');
+        body.replaceChildren();
+        if (done) {
+            body.insertAdjacentHTML('afterbegin', `<div class="p-3">El plato
+        <strong>${dish.name}</strong> ha sido añadido a favoritos.</div>`);
+        } else {
+            body.insertAdjacentHTML(
+                'afterbegin',
+                `<div class="error text-danger p-3"><i class="bi bi-exclamationtriangle"></i> El plato <strong>${dish.name}</strong> no se ha podido añadir.</div>`,
+            );
+        }
+        messageModal.show();
+    }
+
+    bindVerDishFav(handler) {
+        const verDishFav = document.getElementById('verDishFav');
+        verDishFav.addEventListener('click', (event) => {
+            handler();
+        });
+    }
+
+    showVerDishFav(dishes) {
+        if (dishes) {
+            this.main.replaceChildren();
+            const container = document.createElement('div');
+            container.classList.add('container');
+            container.classList.add('my-3');
+            container.id = 'add-dish-fav';
+            container.insertAdjacentHTML(
+                'afterbegin',
+                '<h1 class="display-5">Mis platos favoritos</h1>',
+            );
+            const row = document.createElement('div');
+            row.classList.add('row');
+            for (const dish of dishes) {
+                row.insertAdjacentHTML('beforeend', `<div class="col-lg-3 col-md-6">
+            <div class="dish-list-image"><img src="${dish.image}" alt="${dish.name}" class="card-img-top" style="height: 300px; object-fit: cover;"/>
+            </div>
+            
+            <div class="dish-list-text">
+            <a data-dish="${dish.name}"><h3>${dish.name}</h3></a>`);
+            }
+            container.append(row);
+            this.main.append(container);
+        } else {
+            this.main.replaceChildren();
+            const container = document.createElement('div');
+            container.classList.add('container');
+            container.classList.add('my-3');
+            container.id = 'add-dish-fav';
+            container.insertAdjacentHTML(
+                'afterbegin',
+                '<h1 class="display-5">No hay platos en favoritos</h1>',
+            );
+            this.main.append(container);
+        }
+    }
+
+    getVerDishes() {
+        return JSON.parse(localStorage.getItem('favoriteDishes'));
+    }
 }
 export default RestauranteView;
